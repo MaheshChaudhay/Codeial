@@ -1,5 +1,5 @@
 function profile(req, res) {
-  res.end("<h1>Profile Page of the user..</h1>");
+  return res.render("profile", { title: "Profile" });
 }
 
 function editUser(req, res) {
