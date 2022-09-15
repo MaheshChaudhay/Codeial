@@ -1,7 +1,8 @@
 <h1><%= title%> / Codeial</h1>
 <section id="feed-posts">
   <h4>Posts</h4>
-  <form id="new-post-form" method="POST" action="">
+  <% if(locals.user) { %>
+  <form id="new-post-form" method="POST" action="/posts/">
     <textarea
       name="content"
       cols="30"
@@ -10,4 +11,18 @@
     ></textarea>
     <input type="submit" value="Post" />
   </form>
+  <% } %>
+  <div id="posts-list-container">
+    <ul>
+      <% for(const post of posts) { %>
+      <li>
+        <p>
+          <%= post.content %>
+          <br />
+          <small><%= post.user.name %></small>
+        </p>
+      </li>
+      <% }%>
+    </ul>
+  </div>
 </section>
