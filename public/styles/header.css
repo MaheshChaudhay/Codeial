@@ -1,0 +1,19 @@
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  background-color: #943d24;
+  height: 3.5rem; }
+  header ul {
+    display: flex;
+    list-style: none;
+    width: 30%;
+    justify-content: flex-end; }
+    header ul li {
+      margin-left: 1rem;
+      font-size: 1rem;
+      font-weight: bold; }
+  header a {
+    color: #fffbf0;
+    text-decoration: none; }

@@ -1,0 +1,25 @@
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  background-color: #943d24;
+  height: 3.5rem;
+
+  ul {
+    display: flex;
+    list-style: none;
+
+    width: 30%;
+    justify-content: flex-end;
+    li {
+      margin-left: 1rem;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+  }
+  a {
+    color: #fffbf0;
+    text-decoration: none;
+  }
+}

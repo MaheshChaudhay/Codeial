@@ -5,10 +5,12 @@ function profile(req, res) {
 }
 
 function editUser(req, res) {
-  res.end("<h1>Edit the user..</h1>");
+  return res.send("<h1>Edit the user..</h1>");
 }
 
 function getSignup(req, res) {
+  if (req.isAuthenticated()) return res.redirect("/users/profile");
+
   return res.render("signup", { title: "Signup" });
 }
 
@@ -47,12 +49,22 @@ function createUser(req, res) {
 }
 
 function getLogin(req, res) {
+  if (req.isAuthenticated()) return res.redirect("/users/profile");
   return res.render("login", { title: "Login" });
 }
 
 function login(req, res) {
   console.log(req.body);
-  return res.send("<h1>Login successfull..</h1>");
+  // return res.redirect("/users/profile");
+}
+
+function signOut(req, res) {
+  req.logout(function (err) {
+    if (err) {
+      return res.send({ message: err });
+    }
+    return res.redirect("/");
+  });
 }
 
 module.exports = {
@@ -62,4 +74,5 @@ module.exports = {
   createUser,
   getLogin,
   login,
+  signOut,
 };
