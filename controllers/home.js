@@ -4,6 +4,12 @@ function home(req, res) {
   // userId = req.user._id;
   Post.find({})
     .populate("user")
+    .populate({
+      path: "comments",
+      populate: {
+        path: "user",
+      },
+    })
     .then((posts) => {
       return res.render("home", { title: "Home", posts });
     })

@@ -8,21 +8,15 @@
       cols="30"
       rows="3"
       placeholder="Enter here.."
+      required
     ></textarea>
     <input type="submit" value="Post" />
   </form>
   <% } %>
   <div id="posts-list-container">
     <ul>
-      <% for(const post of posts) { %>
-      <li>
-        <p>
-          <%= post.content %>
-          <br />
-          <small><%= post.user.name %></small>
-        </p>
-      </li>
-      <% }%>
+      <% for(const post of posts) { %> <%- include("post", {post : post}) %> <%
+      }%>
     </ul>
   </div>
 </section>
