@@ -13,7 +13,18 @@ function addComment(req, res) {
           .then((comment) => {
             post.comments.push(comment._id);
             post.save();
-            return res.redirect("/");
+            comment.populate("user").then((comment) => {
+              if (req.xhr) {
+                return res.status(200).json({
+                  data: {
+                    comment: comment,
+                  },
+                  message: "Comment added!",
+                });
+              }
+
+              return res.redirect("/");
+            });
           })
           .catch((err) => {
             console.log("error in adding comment : ", err);
@@ -35,6 +46,14 @@ function deleteComment(req, res) {
       Post.findByIdAndUpdate(postId, {
         $pull: { comments: req.params.id },
       }).then(() => {
+        if (req.xhr) {
+          return res.status(200).json({
+            data: {
+              comment_id: req.params.id,
+            },
+            message: "Comment Deleted!",
+          });
+        }
         return res.redirect("back");
       });
     } else {

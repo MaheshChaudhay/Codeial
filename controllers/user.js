@@ -1,7 +1,13 @@
 const User = require("./../models/user");
 
 function profile(req, res) {
-  return res.render("profile", { title: "Profile" });
+  User.findById(req.params.id)
+    .then((user) => {
+      return res.render("profile", { title: "Profile", profileUser: user });
+    })
+    .catch((err) => {
+      return res.redirect("back");
+    });
 }
 
 function editUser(req, res) {
@@ -9,7 +15,8 @@ function editUser(req, res) {
 }
 
 function getSignup(req, res) {
-  if (req.isAuthenticated()) return res.redirect("/users/profile");
+  if (req.isAuthenticated())
+    return res.redirect(`/users/profile/${req.user.id}`);
 
   return res.render("signup", { title: "Signup" });
 }
@@ -49,22 +56,40 @@ function createUser(req, res) {
 }
 
 function getLogin(req, res) {
-  if (req.isAuthenticated()) return res.redirect("/users/profile");
+  if (req.isAuthenticated())
+    return res.redirect(`/users/profile/${req.user.id}`);
   return res.render("login", { title: "Login" });
 }
 
 function login(req, res) {
-  console.log(req.body);
-  // return res.redirect("/users/profile");
+  console.log("login >>>>>>");
+  // console.log(req.body);
+  req.flash("success", "You have successfully logged in..");
+  return res.redirect("/");
 }
 
 function signOut(req, res) {
+  console.log("logout >>>>>>");
+
   req.logout(function (err) {
     if (err) {
       return res.send({ message: err });
+    } else {
+      req.flash("success", "You have suucessfully logged out..");
+      return res.redirect("/");
     }
-    return res.redirect("/");
   });
+}
+
+function updateUSer(req, res) {
+  if (req.params.id == req.user.id) {
+    User.findByIdAndUpdate(req.params.id, req.body).then((user) => {
+      console.log(`User has been updated succesfully : ${user}`);
+      return res.redirect("back");
+    });
+  } else {
+    return res.status(401).send("Unauthorized..");
+  }
 }
 
 module.exports = {
@@ -75,4 +100,5 @@ module.exports = {
   getLogin,
   login,
   signOut,
+  updateUSer,
 };

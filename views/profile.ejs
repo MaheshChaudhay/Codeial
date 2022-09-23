@@ -1,4 +1,27 @@
 <link rel="stylesheet" href="/styles/profile.css" />
 <h1><%= title %> / Codeial</h1>
-<p>Name : <%= user.name %></p>
-<p>Email : <%= user.email %></p>
+<% if(profileUser.id == user.id) { %>
+
+<form method="POST" action="/users/update/<%= profileUser._id %>">
+  <input
+    type="text"
+    name="name"
+    placeholder="Your Name"
+    value="<%= profileUser.name %>"
+    required
+  />
+  <input
+    type="email"
+    name="email"
+    placeholder="Your Email"
+    value="<%= profileUser.email %>"
+    required
+  />
+  <input type="submit" value="Update" />
+</form>
+
+<% } else { %>
+
+<p>Name : <%= profileUser.name %></p>
+<p>Email : <%= profileUser.email %></p>
+<% } %>

@@ -13,28 +13,55 @@ function createPost(req, res) {
     user: user,
   })
     .then((post) => {
-      console.log(`Post cdreated successfully.. ${post}`);
-      return res.redirect("/");
+      post.populate("user").then((post) => {
+        if (req.xhr) {
+          return res.status(200).json({
+            data: {
+              post: post,
+            },
+            message: "Post created!",
+          });
+        }
+        req.flash("success", "Post Published!");
+        return res.redirect("back");
+      });
     })
     .catch((err) => {
-      console.log(`Error in creating the post : ${err}`);
-      return res.send({ message: err });
+      req.flash("error", err);
+      return res.redirect("back");
     });
 }
 
 function deletePost(req, res) {
-  const post = Post.findById(req.params.id).then((post) => {
-    if (post && post.user == req.user.id) {
-      post.remove();
+  const post = Post.findById(req.params.id)
+    .then((post) => {
+      if (post && post.user == req.user.id) {
+        post.remove();
 
-      Comment.deleteMany({ post: req.params.id }).then((comments) => {
-        console.log(`Deleted comments : ${comments}`);
+        Comment.deleteMany({ post: req.params.id }).then((comments) => {
+          if (req.xhr) {
+            return res.status(200).json({
+              data: {
+                post_id: req.params.id,
+              },
+              message: "Post deleted!",
+            });
+          }
+          req.flash(
+            "success",
+            "Post and associated comments deleted successfully!"
+          );
+          return res.redirect("back");
+        });
+      } else {
+        req.flash("error", "You cannot delete this post!");
         return res.redirect("back");
-      });
-    } else {
+      }
+    })
+    .catch((err) => {
+      req.flash("error", err);
       return res.redirect("back");
-    }
-  });
+    });
 }
 
 module.exports = {

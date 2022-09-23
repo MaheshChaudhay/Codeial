@@ -4,7 +4,11 @@ const userController = require("./../controllers/user");
 
 const router = express.Router();
 
-router.get("/profile", passport.checkAuthentication, userController.profile);
+router.get(
+  "/profile/:id",
+  passport.checkAuthentication,
+  userController.profile
+);
 router.get("/edit", userController.editUser);
 router.get("/signup", userController.getSignup);
 router.post("/signup", userController.createUser);
@@ -13,11 +17,11 @@ router.post(
   "/login",
   passport.authenticate("local", {
     failureRedirect: "/users/login",
-    successRedirect: "/users/profile",
   }),
   userController.login
 );
 
 router.get("/signout", userController.signOut);
+router.post("/update/:id", userController.updateUSer);
 
 module.exports = router;

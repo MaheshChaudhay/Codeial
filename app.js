@@ -8,6 +8,8 @@ const path = require("path");
 const db = require("./config/mongoose");
 const MongoStore = require("connect-mongo");
 const sassMiddleware = require("node-sass-middleware");
+const flash = require("connect-flash");
+const customMidlleware = require("./config/middleware");
 
 const port = 8000;
 
@@ -60,6 +62,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(passport.setAuthenticatedUser);
+app.use(flash());
+app.use(customMidlleware.setFlash);
 
 app.use("/", require("./routes/index"));
 

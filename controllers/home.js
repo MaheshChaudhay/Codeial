@@ -1,3 +1,4 @@
+const User = require("../models/user");
 const Post = require("./../models/post");
 
 function home(req, res) {
@@ -10,8 +11,11 @@ function home(req, res) {
         path: "user",
       },
     })
+    .sort("-createdAt")
     .then((posts) => {
-      return res.render("home", { title: "Home", posts });
+      User.find({}).then((users) => {
+        return res.render("home", { title: "Codeial | Home", posts, users });
+      });
     })
     .catch((err) => {
       console.log("error in fetching posts : ", err);
