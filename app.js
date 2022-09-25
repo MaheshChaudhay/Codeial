@@ -30,6 +30,7 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use(cookieParser());
 app.use(express.static("public"));
+app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(expressLayouts);
 app.use(express.urlencoded({ extended: false }));
 

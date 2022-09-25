@@ -1,4 +1,6 @@
 const User = require("./../models/user");
+const fs = require("fs");
+const path = require("path");
 
 function profile(req, res) {
   User.findById(req.params.id)
@@ -81,14 +83,41 @@ function signOut(req, res) {
   });
 }
 
-function updateUSer(req, res) {
+async function updateUSer(req, res) {
   if (req.params.id == req.user.id) {
-    User.findByIdAndUpdate(req.params.id, req.body).then((user) => {
-      console.log(`User has been updated succesfully : ${user}`);
+    try {
+      const user = await User.findById(req.params.id);
+      console.log(user);
+      User.uploadAvatar(req, res, function (err) {
+        if (err) {
+          console.log("*****Multer Error", err);
+        }
+
+        user.name = req.body.name;
+        user.email = req.body.email;
+        if (req.file) {
+          // console.log(req.file);
+
+          if (
+            user.avatar &&
+            fs.existsSync(path.join(__dirname, "..", user.avatar))
+          ) {
+            fs.unlinkSync(path.join(__dirname, "..", user.avatar));
+          }
+          user.avatar = User.avatarPath + "/" + req.file.filename;
+        }
+
+        user.save();
+        return res.redirect("back");
+      });
+    } catch (error) {
+      console.log(error);
+      req.flash("error", error);
       return res.redirect("back");
-    });
+    }
   } else {
-    return res.status(401).send("Unauthorized..");
+    req.flash("error", "You cannot delete this post!");
+    return res.redirect("back");
   }
 }
 
