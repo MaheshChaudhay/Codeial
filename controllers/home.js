@@ -13,9 +13,60 @@ function home(req, res) {
     })
     .sort("-createdAt")
     .then((posts) => {
-      User.find({}).then((users) => {
-        return res.render("home", { title: "Codeial | Home", posts, users });
-      });
+      User.find({})
+        .populate({
+          path: "friendships",
+          populate: {
+            path: "from_user",
+          },
+        })
+        .populate({
+          path: "friendships",
+          populate: {
+            path: "to_user",
+          },
+        })
+        .then((users) => {
+          if (req.user) {
+            console.log("USer is logged in : ", req.user);
+            const loggedInUser = User.findById(req.user.id)
+              .populate({
+                path: "friendships",
+                populate: {
+                  path: "to_user",
+                },
+              })
+              .populate({
+                path: "friendships",
+                populate: {
+                  path: "from_user",
+                },
+              })
+              .then((user) => {
+                const friends = [];
+                user.friendships.forEach((friendship) => {
+                  if (req.user.id == friendship.to_user._id) {
+                    friends.push(friendship.from_user);
+                  } else {
+                    friends.push(friendship.to_user);
+                  }
+                });
+                console.log("user friends>>>>", friends);
+                return res.render("home", {
+                  title: "Codeial | Home",
+                  posts,
+                  users,
+                  friends,
+                });
+              });
+          } else {
+            return res.render("home", {
+              title: "Codeial | Home",
+              posts,
+              users,
+            });
+          }
+        });
     })
     .catch((err) => {
       console.log("error in fetching posts : ", err);

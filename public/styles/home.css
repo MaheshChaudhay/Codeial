@@ -1,5 +1,6 @@
 #home-container {
-  display: flex; }
+  display: flex;
+  min-height: 557px; }
   #home-container #feed-posts {
     width: 75%;
     padding: 1rem; }
@@ -7,3 +8,6 @@
     width: 25%;
     border-left: 1px solid #bebdbd;
     padding: 1rem; }
+    #home-container #user-friends #friends {
+      margin-bottom: 2rem;
+      border-bottom: 1px solid #bebdbd; }

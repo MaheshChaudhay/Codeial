@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="/styles/profile.css" />
-<img src="<%= user.avatar %>" alt="<%= user.name %>" width="100" />
 
 <% if(profileUser.id == user.id) { %>
+<img src="<%= user.avatar %>" alt="<%= user.name %>" width="100" />
 <form
   method="POST"
   action="/users/update/<%= profileUser._id %>"
@@ -24,9 +24,12 @@
   <input type="file" name="avatar" placeholder="Profile Picture" />
   <input type="submit" value="Update" />
 </form>
-
 <% } else { %>
-
+<img src="<%= profileUser.avatar %>" alt="<%= user.name %>" width="100" />
 <p>Name : <%= profileUser.name %></p>
 <p>Email : <%= profileUser.email %></p>
+<a id="toggle-friend" href="/users/toggle-friend/<%= profileUser.id %>"
+  ><%= friendStatus %></a
+>
 <% } %>
+<script src="/scripts/profile.js"></script>

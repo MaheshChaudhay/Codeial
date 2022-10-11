@@ -1,13 +1,21 @@
 #home-container {
   display: flex;
+  min-height: 557px;
   #feed-posts {
     width: 75%;
     padding: 1rem;
   }
 
   #user-friends {
+    // display: flex;
+    // flex-direction: column;
+    // justify-content: space-around;
     width: 25%;
     border-left: 1px solid rgb(190, 189, 189);
     padding: 1rem;
+    #friends {
+      margin-bottom: 2rem;
+      border-bottom: 1px solid rgb(190, 189, 189);
+    }
   }
 }

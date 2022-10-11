@@ -24,12 +24,43 @@
   </section>
 
   <section id="user-friends">
-    <h4>Friends</h4>
-    <% for(const user of users) { %>
-    <p>
-      <a href="/users/profile/<%= user._id %>"><%= user.name %></a>
-    </p>
+    <% if(locals.user) {%>
+    <div id="friends">
+      <h4>Friends</h4>
+      <% for(const friend of friends) { %>
+      <p id="friend-<%= friend._id %>">
+        <a href="/users/profile/<%= friend._id %>"><%= friend.name %></a>
+        <a
+          id="<%= friend._id %>"
+          class="remove-friend"
+          href="/users/toggle-friend/<%= friend._id %>"
+          >X</a
+        >
+      </p>
+      <% } %>
+    </div>
     <% } %>
+    <div id="users">
+      <h4>Users</h4>
+      <% for(const user of users) { %>
+      <p>
+        <a href="/users/profile/<%= user._id %>"><%= user.name %></a>
+      </p>
+      <% } %>
+    </div>
   </section>
+  <%- include("_chat-box"); %>
 </div>
 <script src="/scripts/home_posts.js"></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.2/socket.io.js"
+  integrity="sha512-VJ6+sp2E5rFQk05caiXXzQd1wBABpjEj1r5kMiLmGAAgwPItw1YpqsCCBtq8Yr1x6C49/mTpRdXtq8O2RcZhlQ=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script src="/scripts/chat-engine.js"></script>
+<% if (locals.user) { %>
+<script>
+  new ChatEngine("chat-box", "<%= locals.user.email%>");
+</script>
+<% } %>

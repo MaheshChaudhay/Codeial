@@ -24,4 +24,21 @@ router.post(
 router.get("/signout", userController.signOut);
 router.post("/update/:id", userController.updateUSer);
 
+router.get(
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  })
+);
+
+router.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/users/login",
+  }),
+  userController.login
+);
+
+router.get("/toggle-friend/:id", userController.toggleFriend);
+
 module.exports = router;

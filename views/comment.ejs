@@ -10,6 +10,14 @@
     </small>
     <% } %> <%= comment.content %>
     <br />
-    <small> <%= comment.user.name %> </small>
+    <small>
+      <a
+        class="like-comment-button"
+        href="/likes/toggle/?id=<%= comment._id %>&type=Comment"
+        ><i class="fa-solid fa-thumbs-up"></i></a
+      >&ensp;<span id="comment-like-count-<%= comment._id %>"
+        ><%= comment.likes.length %></span
+      >&ensp;<%= comment.user.name %>
+    </small>
   </p>
 </li>

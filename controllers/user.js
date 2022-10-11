@@ -1,11 +1,50 @@
 const User = require("./../models/user");
 const fs = require("fs");
 const path = require("path");
+const Friendship = require("./../models/friendship");
 
 function profile(req, res) {
   User.findById(req.params.id)
+    .populate({
+      path: "friendships",
+      populate: {
+        path: "from_user",
+      },
+    })
+    .populate({
+      path: "friendships",
+      populate: {
+        path: "to_user",
+      },
+    })
     .then((user) => {
-      return res.render("profile", { title: "Profile", profileUser: user });
+      if (req.user.id == user._id) {
+        return res.render("profile", { title: "Profile", profileUser: user });
+      } else {
+        console.log("profile user>>>>>>>", user);
+        console.log("re.user.id>>>>", req.user.id);
+        let areFriends = false;
+        let friendStatus = "Add Friend";
+        user.friendships.forEach((friendship) => {
+          console.log("to user >>>", friendship.to_user.id);
+          console.log("from user >>>", friendship.from_user.id);
+
+          if (
+            !areFriends &&
+            (friendship.to_user.id == req.user.id ||
+              friendship.from_user.id == req.user.id)
+          ) {
+            areFriends = true;
+            friendStatus = "Remove Friend";
+          }
+        });
+        console.log("areFriends>>>>", areFriends);
+        return res.render("profile", {
+          title: "Profile",
+          profileUser: user,
+          friendStatus,
+        });
+      }
     })
     .catch((err) => {
       return res.redirect("back");
@@ -121,6 +160,64 @@ async function updateUSer(req, res) {
   }
 }
 
+async function toggleFriend(req, res) {
+  let deleted = false;
+  console.log("req.params.id>>>>", req.params.id);
+  console.log("req.user.id>>>>>>>", req.user.id);
+  let existingFriendship = await Friendship.findOne({
+    to_user: req.params.id,
+    from_user: req.user.id,
+  });
+  if (!existingFriendship) {
+    existingFriendship = await Friendship.findOne({
+      to_user: req.user.id,
+      from_user: req.params.id,
+    });
+  }
+  if (existingFriendship) {
+    const deletedFriendship = await Friendship.findByIdAndDelete(
+      existingFriendship._id
+    );
+    await User.findByIdAndUpdate(req.params.id, {
+      $pull: {
+        friendships: existingFriendship._id,
+      },
+    });
+    await User.findByIdAndUpdate(req.user.id, {
+      $pull: {
+        friendships: existingFriendship._id,
+      },
+    });
+    console.log("removedFriendship>>>>>>>>", existingFriendship);
+    deleted = true;
+    return res.status(200).json({
+      message: "Friend removed successfully",
+      data: {
+        deleted,
+      },
+    });
+  } else {
+    const newFriendship = await Friendship.create({
+      to_user: req.params.id,
+      from_user: req.user.id,
+    });
+    const toUser = await User.findById(req.params.id);
+    toUser.friendships.push(newFriendship._id);
+    const fromUser = await User.findById(req.user.id);
+    fromUser.friendships.push(newFriendship._id);
+    toUser.save();
+    fromUser.save();
+    console.log("new friendship >>>", newFriendship);
+    return res.status(200).json({
+      message: "Friend added successfully",
+      data: {
+        deleted,
+        friend: newFriendship,
+      },
+    });
+  }
+}
+
 module.exports = {
   profile,
   editUser,
@@ -130,4 +227,5 @@ module.exports = {
   login,
   signOut,
   updateUSer,
+  toggleFriend,
 };
